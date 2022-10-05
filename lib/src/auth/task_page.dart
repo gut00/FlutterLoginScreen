@@ -1,125 +1,82 @@
-// ignore_for_file: list_remove_unrelated_type
+// ignore_for_file: list_remove_unrelated_type, unused_import, import_of_legacy_library_into_null_safe
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myapp/src/auth/components/item.dart';
+import 'package:myapp/src/auth/controllers/task_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// ignore: duplicate_import
-import 'components/item.dart';
 
 class TaskPage extends StatefulWidget {
-  var items = <Items>[];
-
-  TaskPage({super.key}) {
-    // items.add(Items(title: 'item 1', check: false));
-    // items.add(Items(title: 'item 2', check: false));
-    // items.add(Items(title: 'item 3', check: false));
-    // items.add(Items(title: 'item 4', check: false));
-  }
+  const TaskPage({super.key});
 
   @override
   State<TaskPage> createState() => _TaskPageState();
 }
 
 class _TaskPageState extends State<TaskPage> {
-  var newTaksCtrl = TextEditingController();
-
-  void add() {
-    if (newTaksCtrl.text.isEmpty) return;
-
-    setState(() {
-      widget.items.add(
-        Items(title: newTaksCtrl.text, check: false),
-      );
-      newTaksCtrl.text = '';
-      save();
-    });
-  }
-
-  void remove(int index) {
-    setState(() {
-      widget.items.removeAt(index);
-      save();
-    });
-  }
-
-  Future load() async {
-    var prefs = await SharedPreferences.getInstance();
-    var data = prefs.getString('data');
-
-    if (data != null) {
-      Iterable decored = jsonDecode(data);
-      List<Items> result = decored.map((x) => Items.fromJson(x)).toList();
-      setState(() {
-        widget.items = result;
-      });
-    }
-  }
-
-  save() async {
-    var prefs = await SharedPreferences.getInstance();
-    await prefs.setString('data', jsonEncode(widget.items));
-  }
-
-  _TaskPageState() {
-    load();
-  }
+  bool check = false;
+  final TaskController _ = Get.put(TaskController());
 
   @override
   Widget build(BuildContext context) {
-    //newTaksCtrl. controller
-    return Scaffold(
-      appBar: AppBar(
-        title: TextFormField(
-          controller: newTaksCtrl,
-          keyboardType: TextInputType.text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-          ),
-          decoration: const InputDecoration(
-            labelText: 'Nova tarefa',
-            labelStyle: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-            ),
-          ),
+    return Obx(
+      () => Scaffold(
+        appBar: AppBar(),
+        backgroundColor: Colors.white,
+        body: ListView.builder(
+          itemCount: _.listingItems.length,
+          itemBuilder: (BuildContext ctxt, int index) {
+            var item = _.listingItems[index];
+            return CheckboxListTile(
+                activeColor: const Color.fromARGB(255, 20, 81, 131),
+                title: Text(item.title),
+                value: item.check,
+                onChanged: (bool? value) {
+                  setState(() {
+                    item.check = value!;
+                  });
+                });
+          },
         ),
-      ),
-      backgroundColor: Colors.white,
-      body: ListView.builder(
-        itemCount: widget.items.length,
-        itemBuilder: (BuildContext ctxt, int index) {
-          final item = widget.items[index];
-          return Dismissible(
-            key: Key(item.title),
-            background: Container(
-              color: Colors.red.withOpacity(0.6),
-            ),
-            onDismissed: (direction) {
-              remove(index);
-            },
-            child: CheckboxListTile(
-              title: Text(item.title),
-              value: item.check,
-              onChanged: (value) {
-                setState(
-                  () {
-                    item.check = value;
-                    save();
-                  },
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () async {
+            await showDialog(
+              context: context,
+              builder: ((context) {
+                return AlertDialog(
+                  content: TextFormField(
+                    controller: _.descripitionTaksText.value,
+                  ),
+                  title: const Text('Nova tarefa'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        if (_.descripitionTaksText.value.text.isNotEmpty) {
+                          _.listingItems.value.add(
+                            Items(
+                                title: _.descripitionTaksText.value.text,
+                                check: false),
+                          );
+                          _.descripitionTaksText.value.text = '';
+                          Navigator.of(context).pop();
+                          setState(() {});
+                          return;
+                        } else {
+                          Get.snackbar('Alerta', 'Descrição não informada!');
+                          return;
+                        }
+                      },
+                      child: const Text('adicionar'),
+                    ),
+                  ],
                 );
-              },
-            ),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: add,
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add),
+              }),
+            );
+          },
+        ),
       ),
     );
   }
