@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:myapp/src/auth/components/item.dart';
+import 'package:myapp/src/auth/models/item.dart';
 
 class TaskController extends GetxController {
   var descripitionTaksText = Rx(TextEditingController());

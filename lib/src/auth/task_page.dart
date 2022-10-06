@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:myapp/src/auth/components/item.dart';
+import 'package:myapp/src/auth/models/item.dart';
 import 'package:myapp/src/auth/controllers/task_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,21 +23,26 @@ class _TaskPageState extends State<TaskPage> {
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: const Text('Agenda'),
+        ),
         backgroundColor: Colors.white,
         body: ListView.builder(
           itemCount: _.listingItems.length,
           itemBuilder: (BuildContext ctxt, int index) {
             var item = _.listingItems[index];
             return CheckboxListTile(
-                activeColor: const Color.fromARGB(255, 20, 81, 131),
-                title: Text(item.title),
-                value: item.check,
-                onChanged: (bool? value) {
-                  setState(() {
+              activeColor: const Color.fromARGB(255, 20, 81, 131),
+              title: Text(item.title),
+              value: item.check,
+              onChanged: (bool? value) {
+                setState(
+                  () {
                     item.check = value!;
-                  });
-                });
+                  },
+                );
+              },
+            );
           },
         ),
         floatingActionButton: FloatingActionButton(
@@ -63,10 +68,13 @@ class _TaskPageState extends State<TaskPage> {
                           _.descripitionTaksText.value.text = '';
                           Navigator.of(context).pop();
                           setState(() {});
-                          return;
                         } else {
-                          Get.snackbar('Alerta', 'Descrição não informada!');
-                          return;
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Alerta, defina uma descrição'),
+                            ),
+                          );
                         }
                       },
                       child: const Text('adicionar'),

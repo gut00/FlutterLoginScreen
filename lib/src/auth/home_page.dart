@@ -28,13 +28,13 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.blue,
       body: SingleChildScrollView(
         child: SizedBox(
-          height: size.height,
+          height: size.height / 1.75,
           width: size.width,
           child: Stack(
             children: [
               Container(
                 width: size.width,
-                height: size.height / 2,
+                height: size.height,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.vertical(
@@ -65,11 +65,21 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       const Padding(
-                        padding: EdgeInsets.only(top: 8),
+                        padding: EdgeInsets.only(top: 1),
+                        child: Text(
+                          'Bem-vindo: ',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 2),
                         child: Text(
                           '@usuario',
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: Colors.black,
                             fontSize: 20,
                           ),
                         ),
@@ -92,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                             fontWeight: FontWeight.w400),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 14),
+                        padding: const EdgeInsets.only(top: 44),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -103,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => TaskPage(),
+                                builder: (context) => const TaskPage(),
                               ),
                             );
                           },
@@ -119,18 +129,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              Positioned(
-                left: 10,
-                top: 10,
-                child: SafeArea(
-                  child: IconButton(
-                    color: Colors.blue,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                    ),
+              SafeArea(
+                child: IconButton(
+                  color: Colors.blue,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
                   ),
                 ),
               ),
